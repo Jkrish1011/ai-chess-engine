@@ -1,5 +1,6 @@
 import os
 import chess.pgn
+from state import State
 
 for fn in os.listdir("data"):
     pgn = open(os.path.join("data", fn))
@@ -9,9 +10,12 @@ for fn in os.listdir("data"):
             game = chess.pgn.read_game(pgn)
         except Exception as e:
             print(e)
-
+        
+        result = game.headers["Result"]
+        value = {'1/2-1/2':0, '0-1': -1, '1-0': 1}[result]
+        print(value)
         board = game.board()
-        for move in game.mainline_moves():
+        for i, move in enumerate(game.mainline_moves()):
             board.push(move)
-            print(board)
-        exit(0)
+            print(value, State(board).serialize()[:, :, 0])
+    break
